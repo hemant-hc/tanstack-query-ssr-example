@@ -1,15 +1,21 @@
-/* global document, window */
+import {
+  Hydrate,
+  QueryClient,
+  QueryClientProvider,
+} from '@tanstack/react-query'
 
-import React from 'react';
-import { hydrateRoot } from 'react-dom/client';
-import MobileDetect from 'mobile-detect';
+import ReactDOM from 'react-dom'
+import App from './components/App';
 
-import App from './components/App.jsx';
+const dehydratedState = window.__REACT_QUERY_STATE__
 
-const md = new MobileDetect(window.navigator.userAgent);
-let fallbackScreenClass = 'xxl';
-if (md.phone() !== null) fallbackScreenClass = 'xs';
-if (md.tablet() !== null) fallbackScreenClass = 'md';
+const queryClient = new QueryClient()
 
-const container = document.getElementById('app');
-hydrateRoot(container, <App fallbackScreenClass={fallbackScreenClass} />);
+ReactDOM.hydrate(
+  <QueryClientProvider client={queryClient}>
+    <Hydrate state={dehydratedState}>
+      <App />
+    </Hydrate>
+  </QueryClientProvider>,
+  document.getElementById('root'),
+)
